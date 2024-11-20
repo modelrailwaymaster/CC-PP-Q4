@@ -93,6 +93,22 @@ int save_file()
 
 int delete_file()
 {
+    bool complete = false;
+    char input[20];
+    while (!complete){
+        printf("Enter the file name(without .txt, type exit to leave): ");
+        scanf("%s",input);
+        if (strcmp(input,"exit")==0){
+            return 0;
+        }else {
+        if (remove(strcat(input,".txt")) == 0) {
+            printf("Deleted successfully\n");
+            complete = true;
+            }
+        else {printf("Unable to delete the file\n");}
+
+        }
+    }
     return 0;
 }
 
