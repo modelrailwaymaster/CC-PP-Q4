@@ -6,6 +6,7 @@
 char *directory;
 int max_directory = 100;
 
+//structures for the file and changes made
 struct file_change
 {
     char operation;
@@ -23,6 +24,7 @@ struct file
 
 struct file current_file;
 
+//open file and store in above var
 int open_file()
 {
     bool complete = false;
@@ -65,12 +67,8 @@ int open_file()
     return 0;
 }
 
-int copy()
-{
-    return 0;
-}
-
-int create()
+//line operations
+int append()
 {
     return 0;
 }
@@ -80,12 +78,17 @@ int delete()
     return 0;
 }
 
-int show()
+int insert()
 {
-    printf("%s\n", current_file.data);
     return 0;
 }
 
+int show()
+{
+    return 0;
+}
+
+//general operations
 int save_file()
 {
     return 0;
@@ -112,17 +115,20 @@ int delete_file()
     return 0;
 }
 
-int lineOp()
+//file operations
+int show_file()
 {
-    printf("lop\n");
+    printf("%s\n", current_file.data);
     return 0;
 }
 
+//exit function
 int my_exit()
 {
     return -1;
 }
 
+//menu template
 int menu(char *options[4], int (*functions[])(), int size)
 {
     int choice;
@@ -148,6 +154,7 @@ int menu(char *options[4], int (*functions[])(), int size)
     }
 }
 
+//file and general operation menu
 int fileOp()
 {
     bool run = true;
@@ -186,6 +193,14 @@ int generalOp()
     return 0;
 }
 
+
+int lineOp()
+{
+    printf("lop\n");
+    return 0;
+}
+
+//main loop
 int main()
 {
     directory = (char *)malloc(max_directory * sizeof(char));
