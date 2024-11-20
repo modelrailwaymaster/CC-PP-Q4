@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 char *directory;
+int max_directory = 100;
 
 struct file_change
 {
@@ -29,14 +30,18 @@ int open_file()
     char input[20];
     char letter;
     char *data;
+    char *tempdirectory;
+    tempdirectory = (char *)malloc(max_directory * sizeof(char));
+    strcpy(tempdirectory,  directory);
 
     while (!complete)
     {
         printf("Enter the file name(without .txt): ");
         scanf("%s", input);
-        fp = fopen(strcat(strcat(directory, input), ".txt"), "r");
+        fp = fopen(strcat(strcat(strcat(tempdirectory,"/"), input), ".txt"), "r");
         fseek(fp, 0, SEEK_END);
-        data = (char *)malloc(ftell(fp) * sizeof(char));
+        data = (char *)malloc(ftell(fp)+1 * sizeof(char));
+        data[ftell(fp)+1] = '\0';
         fseek(fp, 0, SEEK_SET);
         while (true)
         {
@@ -48,14 +53,12 @@ int open_file()
             }
             else
             {
-                printf("%s", data);
                 data[ftell(fp)] = letter;
             }
         }
         fclose(fp);
     }
 
-    printf("%s", data);
     current_file.file_name = input;
     current_file.file_directory = directory;
     current_file.data = data;
@@ -79,7 +82,7 @@ int delete()
 
 int show()
 {
-    printf("%s", current_file.data);
+    printf("%s\n", current_file.data);
     return 0;
 }
 
@@ -169,7 +172,6 @@ int generalOp()
 
 int main()
 {
-    int max_directory = 100;
     directory = (char *)malloc(max_directory * sizeof(char));
     getcwd(directory, max_directory);
     bool run = true;
