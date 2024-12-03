@@ -282,7 +282,28 @@ int show_change_log()
     return 1;
 }
 
-// file operations
+int total_lines(char *filename)
+{
+    int linecount = 0;
+    char letter;
+    FILE *file;
+    file = fopen(filename, "r");
+    while (true)
+    {
+        letter = fgetc(file);
+        if (letter == EOF)
+        {
+            break;
+        }
+        if (letter == '\n')
+        {
+            linecount++;
+        }
+    }
+    fclose(file);
+    return linecount;
+}
+
 // file operations
 int create_file()
 {
@@ -424,6 +445,64 @@ int show_file()
     }
     return 0;
 }
+
+int rename_file()
+{
+    bool complete = false;
+    char source[FILE_MAX];
+    char new[FILE_MAX];
+    FILE *file;
+    FILE *srcfile;
+    while (!complete)
+    {
+        printf("Enter the file name (without .txt, type exit to leave): ");
+        scanf("%s", source);
+        if (strcmp(source, "exit") == 0)
+        {
+            return 0;
+        }
+        strcat(source, ".txt");
+        srcfile = fopen(source, "r");
+        if (srcfile == NULL)
+        {
+            printf("The file does not exist\n");
+            return -1;
+        }
+        printf("Enter the new name(without .txt): ");
+        scanf("%s", new);
+        strcat(new, ".txt");
+        file = fopen(new, "w");
+        if (file == NULL)
+        {
+            printf("Unable to create the file\n");
+            fclose(srcfile);
+            return -1;
+        }
+        int ch;
+        while ((ch = fgetc(srcfile)) != EOF)
+        {
+            fputc(ch, file);
+        }
+        fclose(srcfile);
+        fclose(file);
+        if (remove(source) == 0)
+        {
+            int lines = total_lines(new);
+            file = fopen(CHANGE_LOG, "a");
+            fprintf(file, "%s has been renamed to %s. Number of lines = %d\n", source, new, lines);
+            fclose(file);
+            printf("File renamed successfully\n");
+            complete = true;
+        }
+        else
+        {
+            printf("Unable to delete the file\n");
+            return -1;
+        }
+    }
+    return 1;
+}
+
 // exit function
 int my_exit()
 {
@@ -462,13 +541,13 @@ int menu(char *options[4], int (*functions[])(), int size)
 int fileOp()
 {
     bool run = true;
-    char *options[5] = {"copy", "create", "delete", "show", "exit"};
-    int (*functions[5])() = {&copy_file, &create_file, &delete_file, &show_file, &my_exit};
+    char *options[6] = {"copy", "create", "delete", "show", "rename", "exit"};
+    int (*functions[6])() = {&copy_file, &create_file, &delete_file, &show_file, &rename_file, &my_exit};
     int result;
 
     while (run)
     {
-        result = menu(options, functions, 5);
+        result = menu(options, functions, 6);
         if (result == -1)
         {
             run = false;

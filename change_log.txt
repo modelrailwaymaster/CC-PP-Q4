@@ -14,3 +14,4 @@ A line has been appended in test.txt. Number of lines = (number)
 Line 3 of test.txt has been deleted. Number of lines = (number)
 A line has been inserted at 32760 in test.txt. Number of lines = (number)
 Line 3 of test.txt has been displayed. Number of lines = (number)
+test2.txt has been renamed to test4.txt. Number of lines = 5
