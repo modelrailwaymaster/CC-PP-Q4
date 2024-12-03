@@ -38,7 +38,7 @@ int append_line()
         fprintf(file, "%s\n", input);
         fclose(file);
         file = fopen(CHANGE_LOG, "a");
-        fprintf(file, "A line has been appended in %s. Number of lines = (number)\n", filename);
+        fprintf(file, "A line has been appended in %s. Number of lines = %d\n", filename);
         fclose(file);
         printf("Line appended successfully\n");
         complete = true;
@@ -312,7 +312,7 @@ int create_file()
     FILE *file;
     while (!complete)
     {
-        printf("Enter the new file name(without .txt, type exit to leave): ");
+        printf("Enter the new file name (without .txt, type exit to leave): ");
         scanf("%s", filename);
         if (strcmp(filename, "exit") == 0)
         {
@@ -326,13 +326,14 @@ int create_file()
         }
         file = fopen(filename, "w");
         fclose(file);
+        int lines = total_lines(filename);
         file = fopen(CHANGE_LOG, "a");
-        fprintf(file, "%s has been created. Number of lines = 0\n", filename);
+        fprintf(file, "%s has been created. Number of lines = %d\n", filename, lines);
         fclose(file);
         printf("File created successfully\n");
         complete = true;
     }
-    return 0;
+    return 1;
 }
 
 int copy_file()
@@ -341,17 +342,19 @@ int copy_file()
     char source[FILE_MAX];
     char new[FILE_MAX];
     FILE *file;
+    FILE *srcfile;
+    int ch;
     while (!complete)
     {
-        printf("Enter the source file name(without .txt, type exit to leave): ");
+        printf("Enter the source file name (without .txt, type exit to leave): ");
         scanf("%s", source);
         if (strcmp(source, "exit") == 0)
         {
             return 0;
         }
         strcat(source, ".txt");
-        FILE *srcfp = fopen(source, "r");
-        if (srcfp == NULL)
+        srcfile = fopen(source, "r");
+        if (srcfile == NULL)
         {
             printf("The file does not exist\n");
             return -1;
@@ -359,27 +362,27 @@ int copy_file()
         printf("Enter the new file name(without .txt): ");
         scanf("%s", new);
         strcat(new, ".txt");
-        FILE *fp = fopen(new, "w");
-        if (fp == NULL)
+        file = fopen(new, "w");
+        if (file == NULL)
         {
             printf("Unable to create the file\n");
-            fclose(srcfp);
+            fclose(srcfile);
             return -1;
         }
-        file = fopen(CHANGE_LOG, "a");
-        fprintf(file, "%s has been copied to %s. Number of lines = (number)\n", source, new);
-        fclose(file);
-        int ch;
-        while ((ch = fgetc(srcfp)) != EOF)
+        while ((ch = fgetc(srcfile)) != EOF)
         {
-            fputc(ch, fp);
+            fputc(ch, file);
         }
-        fclose(srcfp);
-        fclose(fp);
+        fclose(srcfile);
+        fclose(file);
+        int lines = total_lines(new);
+        file = fopen(CHANGE_LOG, "a");
+        fprintf(file, "%s has been copied to %s. Number of lines = %d\n", source, new, lines);
+        fclose(file);
         printf("File copied successfully\n");
         complete = true;
     }
-    return 0;
+    return 1;
 }
 
 int delete_file()
@@ -389,7 +392,7 @@ int delete_file()
     FILE *file;
     while (!complete)
     {
-        printf("Enter the file name(without .txt, type exit to leave): ");
+        printf("Enter the file name (without .txt, type exit to leave): ");
         scanf("%s", filename);
         if (strcmp(filename, "exit") == 0)
         {
@@ -397,8 +400,9 @@ int delete_file()
         }
         if (remove(strcat(filename, ".txt")) == 0)
         {
+            int lines = total_lines(filename);
             file = fopen(CHANGE_LOG, "a");
-            fprintf(file, "%s has been deleted. Number of lines = 0\n", filename);
+            fprintf(file, "%s has been deleted. Number of lines = %d\n", filename, lines);
             fclose(file);
             printf("Deleted successfully\n");
             complete = true;
@@ -406,9 +410,10 @@ int delete_file()
         else
         {
             printf("Unable to delete the file\n");
+            return -1;
         }
     }
-    return 0;
+    return 1;
 }
 
 int show_file()
@@ -419,7 +424,7 @@ int show_file()
     FILE *file;
     while (!complete)
     {
-        printf("Enter the file name(without .txt, type exit to leave): ");
+        printf("Enter the file name (without .txt, type exit to leave): ");
         scanf("%s", filename);
         if (strcmp(filename, "exit") == 0)
         {
@@ -437,13 +442,14 @@ int show_file()
             printf("%s", buffer);
         }
         fclose(file);
+        int lines = total_lines(filename);
         file = fopen(CHANGE_LOG, "a");
-        fprintf(file, "%s has been displayed. Number of lines = (number)\n", filename);
+        fprintf(file, "%s has been displayed. Number of lines = %d\n", filename, lines);
         fclose(file);
         printf("File contents displayed successfully\n");
         complete = true;
     }
-    return 0;
+    return 1;
 }
 
 int rename_file()
